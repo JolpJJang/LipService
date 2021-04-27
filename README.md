@@ -1,5 +1,6 @@
-# LipService
+# LipService ![Generic badge](https://img.shields.io/badge/lastupdate-210424-skyblue.svg)
 딥러닝 기반 입술 모양 인식하여 구어 텍스트화
+
 
 ---
 
