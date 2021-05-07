@@ -127,7 +127,4 @@ class VGG_LSTM_fine(keras.Model):
         x = tf.reshape(fm, (self.BZ, self.frame, -1))  # (32, 20, 2048)
         x = self.bilstm(x)
         x = self.dense(x)
-        label = []
-        for i in range(len(x)):
-            label.append(np.argmax(x[i]))
-        return label
+        return x
