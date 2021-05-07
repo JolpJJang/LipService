@@ -8,5 +8,5 @@
 
 ----
 
-```models.py```  : CNN_LSTM & deep_CNN_LSTM & pretrained VGG + LSTM & fine_tuned VGG + LSTM 모델 저장
+```models.py```  : CNN_LSTM & deep_CNN_LSTM & pretrained VGG + LSTM & fine_tuned VGG + LSTM 모델 저장  
 ```TRAIN.py``` : Train을 위한 코드
