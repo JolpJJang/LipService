@@ -1,14 +1,8 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 import dlib
 import cv2
 import numpy as np
 import tensorflow as tf
-from keras.preprocessing import image
+from tensorflow.keras.preprocessing import image
 
 from sklearn.model_selection import train_test_split
 
@@ -30,7 +24,7 @@ class MobileNet_LSTM(keras.Model):
         
         self.mobile = TimeDistributed(MobileNet(include_top=False))
 
-        #self.mobile = TimeDistributed(MobileNet(#weights='imagenet', include_top=False))
+#         self.mobile = TimeDistributed(MobileNet(weights='imagenet', include_top=False))
 
         self.bilstm = layers.Bidirectional(layers.LSTM(256), merge_mode='concat')
         self.dense = layers.Dense(num_classes, activation='softmax')

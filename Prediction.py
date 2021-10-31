@@ -19,7 +19,7 @@ from MobileNet_LSTM import *
 
 class Prediction(QObject):
     
-    sendResult = pyqtSignal()
+    sendResult = pyqtSignal(str)
     words_kor = ['아','안','암','어','오','우','이','임','애','와','외']
     words_eng = ['Stop navigation', 'Excuse me.', 'I am sorry.', 'Thank you.', 'Good bye.', 'I love this game.', 'Nice to meet you.', 'You are welcome.', 'How are you?', 'Have a good time.']
     
@@ -27,53 +27,36 @@ class Prediction(QObject):
         super().__init__()
         self.widget = widget
         self.language = language
+        self.sendResult.connect(self.widget.getResult)
         self.mobilenet = MobileNet_LSTM(num_classes = 11)
         
     def predict(self, data):
-        result = ""
-        if self.language == "eng":
-            # 차후 영어용 가중치로 바꾸기
-            self.mobilenet.load_weights('MobileNet_lip')
-            output = self.mobilenet.predict(data)
-            result = self.words_eng[np.argmax(output)]
-
-        if self.language == "kor":
-            # 차후 한국어용 가중치로 바꾸기
-            print(data.shape)
-            self.mobilenet.load_weights('MobileNet_lip')
-            output = self.mobilenet.predict(data)
-            result = self.words_kor[np.argmax(output)]       
-
-        return result
-
-#     def predict(self, data):
-#         try:
-#             self.bThread = True
-#             self.thread = Thread(target=self.threadFunc, args=(data))
-#             self.thread.start()
-#         except Exception as e:
-#             print("Predict Error: ", e)
-#         else:
-#             self.bThread = True
-#             self.thread = Thread(target=self.threadFunc, args=(data))
-#             self.thread.start()
+        try:
+            self.bThread = True
+        except Exception as e:
+            print("Predict Error: ", e)
+        else:
+            self.bThread = True
+            self.thread = Thread(target=self.threadFunc, args=(data))
+            self.thread.start()
             
-#     def threadFunc(self, data):
-#         while self.bThread:
-#             result = ""
-#             print(self.language)
-#             if self.language == "eng":
-#                 # 차후 영어용 가중치로 바꾸기
-#                 self.mobilenet.load_weights('MobileNet_lip')
-#                 output = self.mobilenet.predict(data)
-#                 result = self.words_eng[np.argmax(output)]
-#                 self.bThread = False
+    def threadFunc(self, data):
+        while self.bThread:
+            result = ""
+            if self.language == "eng":
+                # 차후 영어용 가중치로 바꾸기
+                self.mobilenet.load_weights('eng/MobileNet_lip')
+                output = self.mobilenet.predict(data)
+                result = self.words_eng[np.argmax(output)]
+                print("result: ", result)
+                self.sendResult.emit(result)
+                self.bThread = False
 
-#             if self.language == "kor":
-#                 # 차후 한국어용 가중치로 바꾸기
-#                 self.mobilenet.load_weights('MobileNet_lip')
-#                 output = self.mobilenet.predict(data)
-#                 result = self.words_kor[np.argmax(output)]       
-#                 self.bThread = False
-
-#         return result
+            if self.language == "kor":
+                # 차후 한국어용 가중치로 바꾸기
+                self.mobilenet.load_weights('kor/MobileNet_weights')
+                output = self.mobilenet.predict(data)
+                result = self.words_kor[np.argmax(output)]       
+                print("output: ", output, "result: ", result)
+                self.sendResult.emit(result)
+                self.bThread = False
